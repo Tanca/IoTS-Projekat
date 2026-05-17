@@ -1,0 +1,116 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "IoT REST API",
+    "description": "API for IoT sensor data ingestion and retrieval.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/sensor-data": {
+      "post": {
+        "summary": "Ingest high-frequency sensor data",
+        "description": "Scenario A: High-Frequency Ingestion",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_id": { "type": "string" },
+                  "timestamp": { "type": "string", "format": "date-time" },
+                  "air_temp": { "type": "number" },
+                  "sea_temp": { "type": "number" },
+                  "humidity": { "type": "number" },
+                  "pressure": { "type": "number" },
+                  "wind_speed": { "type": "number" }
+                },
+                "required": ["device_id", "timestamp"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Data ingested successfully"
+          }
+        }
+      }
+    },
+    "/sensor-data/selective/{device_id}": {
+      "get": {
+        "summary": "Retrieve selective sensor data for a specific device",
+        "description": "Scenario B: Selective Monitoring. Returns only timestamp, air_temp, and humidity.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "device_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval"
+          }
+        }
+      }
+    },
+    "/sensor-data/aggregate": {
+      "get": {
+        "summary": "Retrieve aggregated historical data",
+        "description": "Scenario C: Heavy Querying. Returns averages and counts grouped by device.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "device_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_time",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_time",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful aggregation"
+          }
+        }
+      }
+    }
+  }
+}

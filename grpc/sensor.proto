@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package sensor;
+
+service SensorService {
+  rpc IngestSensorData (SensorData) returns (IngestResponse);
+  rpc GetSelectiveData (SelectiveRequest) returns (SelectiveResponse);
+  rpc GetAggregatedData (AggregateRequest) returns (AggregateResponse);
+}
+
+message SensorData {
+  string device_id = 1;
+  string timestamp = 2;
+  float air_temp = 3;
+  float sea_temp = 4;
+  float humidity = 5;
+  float pressure = 6;
+  float wind_speed = 7;
+}
+
+message IngestResponse {
+  string message = 1;
+  string id = 2;
+}
+
+message SelectiveRequest {
+  string device_id = 1;
+  int32 limit = 2;
+}
+
+message SelectiveData {
+  string timestamp = 1;
+  float air_temp = 2;
+  float humidity = 3;
+}
+
+message SelectiveResponse {
+  repeated SelectiveData data = 1;
+}
+
+message AggregateRequest {
+  string device_id = 1;
+  string start_time = 2;
+  string end_time = 3;
+}
+
+message AggregatedData {
+  string device_id = 1;
+  float avg_air_temp = 2;
+  float max_air_temp = 3;
+  float min_air_temp = 4;
+  float avg_humidity = 5;
+  int32 total_readings = 6;
+}
+
+message AggregateResponse {
+  repeated AggregatedData data = 1;
+}

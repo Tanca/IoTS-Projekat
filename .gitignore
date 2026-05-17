@@ -1,0 +1,27 @@
+# Node dependencies
+**/node_modules/
+package-lock.json
+
+# Docker PostgreSQL data volume
+pgdata/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary python/test cache and outputs
+__pycache__/
+*.pyc
+test_results.txt
+payload_results.txt
+pdf_text.txt
