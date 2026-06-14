@@ -1,0 +1,73 @@
+
+=== STATIC FAIRNESS CHECKS (k6 scripts) ===
+  [PASS] scenario_a_graphql.js: load profile == 10/100/500/0
+  [PASS] scenario_a_graphql.js: single sleep(0.1) think-time
+  [PASS] scenario_a_graphql.js: exactly one request per iteration
+  [PASS] scenario_a_graphql.js: no inner request loop
+  [PASS] scenario_a_graphql.js: URL has no stray spaces
+  [PASS] scenario_a_graphql.js: targets GraphQL port 4000
+  [PASS] scenario_a_grpc.js: load profile == 10/100/500/0
+  [PASS] scenario_a_grpc.js: single sleep(0.1) think-time
+  [PASS] scenario_a_grpc.js: exactly one request per iteration
+  [PASS] scenario_a_grpc.js: no inner request loop
+  [PASS] scenario_a_grpc.js: no per-iteration client.close()
+  [PASS] scenario_a_grpc.js: connects once per VU (guarded by __ITER)
+  [PASS] scenario_a_grpc.js: targets gRPC port 50051
+  [PASS] scenario_a_rest.js: load profile == 10/100/500/0
+  [PASS] scenario_a_rest.js: single sleep(0.1) think-time
+  [PASS] scenario_a_rest.js: exactly one request per iteration
+  [PASS] scenario_a_rest.js: no inner request loop
+  [PASS] scenario_a_rest.js: URL has no stray spaces
+  [PASS] scenario_a_rest.js: targets REST port 3000
+  [PASS] scenario_b_graphql.js: load profile == 10/100/500/0
+  [PASS] scenario_b_graphql.js: single sleep(0.1) think-time
+  [PASS] scenario_b_graphql.js: exactly one request per iteration
+  [PASS] scenario_b_graphql.js: no inner request loop
+  [PASS] scenario_b_graphql.js: URL has no stray spaces
+  [PASS] scenario_b_graphql.js: targets GraphQL port 4000
+  [PASS] scenario_b_grpc.js: load profile == 10/100/500/0
+  [PASS] scenario_b_grpc.js: single sleep(0.1) think-time
+  [PASS] scenario_b_grpc.js: exactly one request per iteration
+  [PASS] scenario_b_grpc.js: no inner request loop
+  [PASS] scenario_b_grpc.js: no per-iteration client.close()
+  [PASS] scenario_b_grpc.js: connects once per VU (guarded by __ITER)
+  [PASS] scenario_b_grpc.js: targets gRPC port 50051
+  [PASS] scenario_b_rest.js: load profile == 10/100/500/0
+  [PASS] scenario_b_rest.js: single sleep(0.1) think-time
+  [PASS] scenario_b_rest.js: exactly one request per iteration
+  [PASS] scenario_b_rest.js: no inner request loop
+  [PASS] scenario_b_rest.js: URL has no stray spaces
+  [PASS] scenario_b_rest.js: targets REST port 3000
+  [PASS] scenario_c_graphql.js: load profile == 10/100/500/0
+  [PASS] scenario_c_graphql.js: single sleep(0.1) think-time
+  [PASS] scenario_c_graphql.js: exactly one request per iteration
+  [PASS] scenario_c_graphql.js: no inner request loop
+  [PASS] scenario_c_graphql.js: URL has no stray spaces
+  [PASS] scenario_c_graphql.js: targets GraphQL port 4000
+  [PASS] scenario_c_grpc.js: load profile == 10/100/500/0
+  [PASS] scenario_c_grpc.js: single sleep(0.1) think-time
+  [PASS] scenario_c_grpc.js: exactly one request per iteration
+  [PASS] scenario_c_grpc.js: no inner request loop
+  [PASS] scenario_c_grpc.js: no per-iteration client.close()
+  [PASS] scenario_c_grpc.js: connects once per VU (guarded by __ITER)
+  [PASS] scenario_c_grpc.js: targets gRPC port 50051
+  [PASS] scenario_c_rest.js: load profile == 10/100/500/0
+  [PASS] scenario_c_rest.js: single sleep(0.1) think-time
+  [PASS] scenario_c_rest.js: exactly one request per iteration
+  [PASS] scenario_c_rest.js: no inner request loop
+  [PASS] scenario_c_rest.js: URL has no stray spaces
+  [PASS] scenario_c_rest.js: targets REST port 3000
+  [PASS] scenario A: REST/GraphQL/gRPC share one load profile
+  [PASS] scenario B: REST/GraphQL/gRPC share one load profile
+  [PASS] scenario C: REST/GraphQL/gRPC share one load profile
+  [PASS] rest/server.js: explicit pool max set
+  [PASS] graphql/server.js: explicit pool max set
+  [PASS] DB pools equal across services (rest=500, gql=500, grpc=500)
+  [PASS] gRPC ThreadPoolExecutor workers (500) >= pool (500)
+
+=== RUNTIME PARITY CHECKS (live services) ===
+  (skipped: pip install requests to enable runtime checks)
+
+============================================================
+  RESULT: 64 passed, 0 failed
+============================================================

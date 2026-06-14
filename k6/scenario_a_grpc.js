@@ -14,9 +14,12 @@ export const options = {
 };
 
 export default function () {
-  client.connect('localhost:50051', {
-    plaintext: true
-  });
+  // Connect once per VU (on its first iteration) and keep the channel open.
+  // Reconnecting/closing every iteration crippled throughput and made the
+  // gRPC load profile non-comparable to REST/GraphQL.
+  if (__ITER === 0) {
+    client.connect('localhost:50051', { plaintext: true });
+  }
 
   const data = {
     device_id: `device-1`,
@@ -25,7 +28,7 @@ export default function () {
     sea_temp: Math.random() * 20,
     humidity: Math.random() * 100,
     pressure: 1000 + Math.random() * 50,
-    wind_speed: Math.random() * 20
+    wind_speed: Math.random() * 20,
   };
 
   const response = client.invoke('sensor.SensorService/IngestSensorData', data);
@@ -34,6 +37,5 @@ export default function () {
     'status is OK': (r) => r && r.status === grpc.StatusOK,
   });
 
-  client.close();
   sleep(0.1);
 }

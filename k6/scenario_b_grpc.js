@@ -14,13 +14,14 @@ export const options = {
 };
 
 export default function () {
-  client.connect('localhost:50051', {
-    plaintext: true
-  });
+  // Connect once per VU and reuse the channel (see scenario_a_grpc.js).
+  if (__ITER === 0) {
+    client.connect('localhost:50051', { plaintext: true });
+  }
 
   const data = {
     device_id: 'M1',
-    limit: 1
+    limit: 1,
   };
 
   const response = client.invoke('sensor.SensorService/GetSelectiveData', data);
@@ -29,6 +30,5 @@ export default function () {
     'status is OK': (r) => r && r.status === grpc.StatusOK,
   });
 
-  client.close();
   sleep(0.1);
 }

@@ -6,14 +6,16 @@ import psycopg2
 import psycopg2.extras
 from psycopg2 import pool
 
+# pyrefly: ignore [missing-import]
 import sensor_pb2
+# pyrefly: ignore [missing-import]
 import sensor_pb2_grpc
 
 db_url = os.getenv("DATABASE_URL", "postgresql://iot_user:iot_password@localhost:5432/iot_db")
 
 class SensorServiceServicer(sensor_pb2_grpc.SensorServiceServicer):
     def __init__(self):
-        self.db_pool = pool.ThreadedConnectionPool(1, 20, db_url)
+        self.db_pool = pool.ThreadedConnectionPool(1, 500, db_url)
 
     def IngestSensorData(self, request, context):
         conn = self.db_pool.getconn()
@@ -122,11 +124,11 @@ class SensorServiceServicer(sensor_pb2_grpc.SensorServiceServicer):
             self.db_pool.putconn(conn)
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=500))
     sensor_pb2_grpc.add_SensorServiceServicer_to_server(SensorServiceServicer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
-    print("🚀 gRPC Server running on port 50051")
+    print("gRPC Server running on port 50051")
     server.wait_for_termination()
 
 if __name__ == '__main__':

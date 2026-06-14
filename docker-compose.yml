@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:15
+    command: [ "postgres", "-c", "max_connections=1000" ]
     environment:
       POSTGRES_USER: iot_user
       POSTGRES_PASSWORD: iot_password
@@ -13,7 +14,7 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U iot_user -d iot_db"]
+      test: [ "CMD-SHELL", "pg_isready -U iot_user -d iot_db" ]
       interval: 5s
       timeout: 5s
       retries: 5

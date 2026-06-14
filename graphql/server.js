@@ -4,6 +4,9 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://iot_user:iot_password@localhost:5432/iot_db',
+  // Match REST and gRPC (500) so all three services have equal DB
+  // concurrency. The pg default of max:10 throttled GraphQL at high VU counts.
+  max: 500,
 });
 
 const typeDefs = `#graphql

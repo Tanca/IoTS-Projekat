@@ -8,6 +8,11 @@ app.use(express.json());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://iot_user:iot_password@localhost:5432/iot_db',
+  // node-postgres defaults to max:10, which throttles the service to 10
+  // concurrent DB connections. Under 500 VUs that queues requests and
+  // makes REST look artificially slow vs gRPC (whose pool was 500).
+  // Match the gRPC pool so the comparison is fair.
+  max: 500,
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -58,13 +63,13 @@ app.get('/api/sensor-data/aggregate', async (req, res) => {
   
   try {
     let query = `
-      SELECT 
+      SELECT
         device_id,
-        AVG(air_temp) as avg_air_temp,
-        MAX(air_temp) as max_air_temp,
-        MIN(air_temp) as min_air_temp,
-        AVG(humidity) as avg_humidity,
-        COUNT(*) as total_readings
+        AVG(air_temp)::float as avg_air_temp,
+        MAX(air_temp)::float as max_air_temp,
+        MIN(air_temp)::float as min_air_temp,
+        AVG(humidity)::float as avg_humidity,
+        COUNT(*)::int as total_readings
       FROM sensor_data
       WHERE 1=1
     `;
