@@ -1,4 +1,4 @@
-# Komparativna Analiza Sinhronih Komunikacionih Paradigmi u IoT Mikroservisnim Sistemima
+# Uporedni benchmark REST, GraphQL i gRPC protokola za prenos senzorskih podataka pod jednakim uslovima
 
 Ovaj projekat predstavlja kompletan istraživački i praktični rad na temu evaluacije performansi tri dominantna sinhrona komunikaciona modela (**REST**, **GraphQL** i **gRPC**) u kontekstu Interneta stvari (IoT). Projekat analizira latenciju, mrežni saobraćaj (payload size) i procesorske resurse pod različitim opterećenjima u kontejnerizovanom okruženju.
 
@@ -181,7 +181,7 @@ Merenja su izvedena kroz tri specifična scenarija koji simuliraju realne situac
 
 ## 📊 4. Rezultati Analize i Evaluacije Performansi
 
-Merenja se rade nad sistemom u Docker Compose-u, kroz tri grupe: latencija i propusnost (k6), velicina odgovora (payload) i zauzece resursa (`docker stats`). Svi protokoli se mere pod istim uslovima: isti profil opterecenja (10/100/500 VU, faze po 30s), isto vreme izmedju zahteva (0.1s), jedan zahtev po iteraciji i jednak broj DB konekcija (500). Skripta `validate.py` proverava da su ovi uslovi ispunjeni.
+Merenja se rade nad sistemom u Docker Compose-u, kroz tri grupe: latencija i propusnost (k6), velicina odgovora (payload) i zauzece resursa (`docker stats`). Svi protokoli se mere pod istim uslovima: isti profil opterecenja (10/100/500 VU, faze po 30s), isto vreme izmedju zahteva (0,1s), jedan zahtev po iteraciji i jednak broj DB konekcija (500). Skripta `validate.py` proverava da su ovi uslovi ispunjeni.
 
 ### 💾 A. Veličina Odgovora (Payload Size) — IZMERENO
 
@@ -211,25 +211,25 @@ Profil opterećenja 10 → 100 → 500 VU (faze po 30 s), `sleep(0.1)` po iterac
 
 | Protokol | Uspešni zahtevi | RPS | avg | p(95) |
 | :--- | :---: | :---: | :---: | :---: |
-| REST | 79.976 | 666 | 129 ms | 325 ms |
-| GraphQL | 68.320 | 569 | 168 ms | 422 ms |
-| gRPC | 14.584 | 121 | 1,18 s | 3,05 s |
+| REST | 79976 | 666 | 129 ms | 325 ms |
+| GraphQL | 68320 | 569 | 168 ms | 422 ms |
+| gRPC | 14584 | 121 | 1,18 s | 3,05 s |
 
 **Scenario B — Selective Monitoring (selektivno čitanje)**
 
 | Protokol | Uspešni zahtevi | RPS | avg | p(95) |
 | :--- | :---: | :---: | :---: | :---: |
-| REST | 91.449 | 762 | 100 ms | 273 ms |
-| GraphQL | 76.020 | 633 | 141 ms | 374 ms |
-| gRPC | 15.468 | 129 | 1,11 s | 2,85 s |
+| REST | 91449 | 762 | 100 ms | 273 ms |
+| GraphQL | 76020 | 633 | 141 ms | 374 ms |
+| gRPC | 15468 | 129 | 1,11 s | 2,85 s |
 
 **Scenario C — Heavy Querying (agregacija)**
 
 | Protokol | Uspešni zahtevi | RPS | avg | p(95) |
 | :--- | :---: | :---: | :---: | :---: |
-| REST | 22.024 | 183 | 746 ms | 2,46 s |
-| GraphQL | 21.549 | 180 | 764 ms | 2,58 s |
-| gRPC | 10.801 | 90 | 1,65 s | 5,05 s |
+| REST | 22024 | 183 | 746 ms | 2,46 s |
+| GraphQL | 21549 | 180 | 764 ms | 2,58 s |
+| gRPC | 10801 | 90 | 1,65 s | 5,05 s |
 
 Redosled po brzini je očekivan: **B (indeksirani point-read) > A (upis) > C (agregacija)** za Node servise. gRPC (Python) je u svim scenarijima na ~120–130 RPS jer je server GIL-ograničen na jedno jezgro (vidi CPU pik ispod); prednost gRPC-a je veličina poruke i memorija, ne sirova propusnost.
 
@@ -242,7 +242,7 @@ Praćeno preko `docker stats` tokom celog k6 testa (pik po kontejneru).
 | REST API (Node.js) | 42 MiB | 138 MiB | 232 % |
 | GraphQL API (Node.js) | 50 MiB | 186 MiB | 193 % |
 | gRPC API (Python) | 93 MiB | 107 MiB | 97 % |
-| PostgreSQL 15 | 181 MiB | 1.284 MiB (~1,28 GiB) | 1.162 % |
+| PostgreSQL 15 | 181 MiB | 1284 MiB (~1,28 GiB) | 1162 % |
 
 > CPU je % jednog jezgra (>100% = više jezgara). **gRPC pik ~97% = jedno zasićeno jezgro (Python GIL)**, uz najmanji RAM otisak (107 MiB) — idealno za edge/M2M. Node servisi koriste 2+ jezgra. **PostgreSQL je najteži** (~11,6 jezgara, 1,28 GiB) i pravo je usko grlo u Scenariju C.
 

@@ -1,4 +1,4 @@
-# Komparativna analiza sinhronih komunikacionih paradigmi u IoT mikroservisnim sistemima
+# Uporedni benchmark REST, GraphQL i gRPC protokola za prenos senzorskih podataka pod jednakim uslovima
 
 Student: Nikola Tancic 19425 — Internet Stvari (IoT), Elektronski Fakultet, 2026.
 
@@ -7,7 +7,7 @@ Poredjenje REST, GraphQL i gRPC protokola nad istom PostgreSQL bazom, kroz tri I
 ## Metodologija (ujednacena za sva tri protokola)
 
 - Profil opterecenja: 10 -> 100 -> 500 virtuelnih korisnika, faze po 30 sekundi.
-- Vreme izmedju zahteva: 0.1 s.
+- Vreme izmedju zahteva: 0,1 s.
 - Jedan zahtev po iteraciji (bez skrivenih unutrasnjih petlji).
 - Jednak broj DB konekcija: 500 za REST, GraphQL i gRPC.
 - Provera: `python validate.py` (staticki proverava da su uslovi isti, a uz pokrenut sistem proverava i da odgovori protokola daju iste vrednosti).
@@ -33,7 +33,7 @@ Zahtev pri ingestiji (isti logicki zapis, kanonske vrednosti):
 Zapazanja:
 - gRPC (binarni Protobuf) ima najmanji payload u svim scenarijima jer ne salje nazive polja ni separatore.
 - Scenario B: REST koristi `SELECT *` i vraca svih 8 kolona (over-fetching) = 149 B, dok GraphQL (89 B) i gRPC (39 B) salju samo 3 trazena polja.
-- Scenario C: pravi agregat vraca brojeve u punoj preciznosti (npr. `avg_air_temp = 11.678116179460275`), pa JSON raste (REST 149 B, GraphQL 181 B zbog `data` omotaca i naziva polja). Protobuf float je fiksno 4 B, pa je gRPC odgovor samo 30 B.
+- Scenario C: pravi agregat vraca brojeve u punoj preciznosti (npr. `avg_air_temp = 11,678116179460275`), pa JSON raste (REST 149 B, GraphQL 181 B zbog `data` omotaca i naziva polja). Protobuf float je fiksno 4 B, pa je gRPC odgovor samo 30 B.
 - Ingestija: GraphQL zahtev je najveci (540 B) jer u telo ukljucuje ceo tekst mutacije; gRPC je najmanji (61 B).
 - Napomena: gRPC broj je velicina Protobuf poruke; na zici se dodaje jos 5 B gRPC okvira po poruci + HTTP/2 zaglavlja (HPACK kompresovana).
 
@@ -45,25 +45,25 @@ Mereno k6 alatom, profil 10 -> 100 -> 500 VU (faze po 30 s), `sleep(0.1)` po ite
 
 | Protokol | Uspesni zahtevi | RPS | avg | p(95) |
 | :--- | :---: | :---: | :---: | :---: |
-| REST | 79.976 | 666 | 129 ms | 325 ms |
-| GraphQL | 68.320 | 569 | 168 ms | 422 ms |
-| gRPC | 14.584 | 121 | 1,18 s | 3,05 s |
+| REST | 79976 | 666 | 129 ms | 325 ms |
+| GraphQL | 68320 | 569 | 168 ms | 422 ms |
+| gRPC | 14584 | 121 | 1,18 s | 3,05 s |
 
 **Scenario B — Selective Monitoring (selektivno citanje)**
 
 | Protokol | Uspesni zahtevi | RPS | avg | p(95) |
 | :--- | :---: | :---: | :---: | :---: |
-| REST | 91.449 | 762 | 100 ms | 273 ms |
-| GraphQL | 76.020 | 633 | 141 ms | 374 ms |
-| gRPC | 15.468 | 129 | 1,11 s | 2,85 s |
+| REST | 91449 | 762 | 100 ms | 273 ms |
+| GraphQL | 76020 | 633 | 141 ms | 374 ms |
+| gRPC | 15468 | 129 | 1,11 s | 2,85 s |
 
 **Scenario C — Heavy Querying (agregacija)**
 
 | Protokol | Uspesni zahtevi | RPS | avg | p(95) |
 | :--- | :---: | :---: | :---: | :---: |
-| REST | 22.024 | 183 | 746 ms | 2,46 s |
-| GraphQL | 21.549 | 180 | 764 ms | 2,58 s |
-| gRPC | 10.801 | 90 | 1,65 s | 5,05 s |
+| REST | 22024 | 183 | 746 ms | 2,46 s |
+| GraphQL | 21549 | 180 | 764 ms | 2,58 s |
+| gRPC | 10801 | 90 | 1,65 s | 5,05 s |
 
 Zapazanja:
 - Redosled po brzini je logican: B (indeksirani point-read) je najbrzi, A (upis) sredina, C (agregacija nad ~51k redova) najsporiji.
@@ -79,13 +79,13 @@ Praceno preko `docker stats` tokom celog k6 testa (pik po kontejneru).
 | REST API (Node.js) | 42 MiB | 138 MiB | 232 % |
 | GraphQL API (Node.js) | 50 MiB | 186 MiB | 193 % |
 | gRPC API (Python) | 93 MiB | 107 MiB | 97 % |
-| PostgreSQL 15 | 181 MiB | 1.284 MiB (~1,28 GiB) | 1.162 % |
+| PostgreSQL 15 | 181 MiB | 1284 MiB (~1,28 GiB) | 1162 % |
 
 Zapazanja:
 - CPU se prikazuje kao % jednog jezgra, pa vrednosti > 100% znace vise jezgara (npr. 232% ≈ 2,3 jezgra).
 - gRPC (Python) pik CPU ~97% = jedno zasiceno jezgro (GIL), uz najmanju memoriju (107 MiB) — odlican otisak za edge/M2M uredjaje.
 - Node servisi koriste 2+ jezgra i vise RAM-a (V8 heap).
-- PostgreSQL je najtezi: pik ~1.162% CPU (~11,6 jezgara) i 1,28 GiB RAM pod 500 konekcija. U Scenariju C baza je usko grlo, pa je tu izbor protokola najmanje bitan.
+- PostgreSQL je najtezi: pik ~1162% CPU (~11,6 jezgara) i 1,28 GiB RAM pod 500 konekcija. U Scenariju C baza je usko grlo, pa je tu izbor protokola najmanje bitan.
 
 ## 4. Zakljucak
 
